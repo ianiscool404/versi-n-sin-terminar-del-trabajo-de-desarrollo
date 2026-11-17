@@ -29,18 +29,20 @@ init python:
 
         def energia(self):
             return self.__energia
+        
+init python:
+    import abc
 
-    # Las publicaciones mostradas
     class Publicacion(abc.ABC):
-    def __init__(self, texto_post):
-        self.__texto_post = texto_post
+        def __init__(self, texto_post):
+            self.__texto_post = texto_post
 
-    def get_texto_post(self):
-        return self.__texto_post
+        def get_texto_post(self):
+            return self.__texto_post
 
-    @abc.abstractmethod
-    def texto(self):
-        pass
+        @abc.abstractmethod
+        def texto(self):
+            pass
 
     class PublicacionFoto(Publicacion):
         def texto(self):
@@ -122,7 +124,7 @@ label escena_2:
     scene cocina with fade
     play sound water_drop loop
 
-    show marta espaldas_uniforme at right with dissolve
+    show marta_pm at right with dissolve
     show micaela mochila_hombro at left with dissolve
 
     "Abrís la puerta de la cocina y agarrás los billetes junto a un pan duro de la mesa."
