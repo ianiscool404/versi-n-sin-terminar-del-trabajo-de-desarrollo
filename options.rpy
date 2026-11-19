@@ -15,6 +15,12 @@
 
 define config.name = _("Lo que nunca se dijo")
 
+transform temblar:
+    linear 0.05 xoffset -8
+    linear 0.05 xoffset 8
+    repeat 6
+    linear 0.05 xoffset 0
+
 transform slot1:
     xalign 0.1 yalign 1.0
 

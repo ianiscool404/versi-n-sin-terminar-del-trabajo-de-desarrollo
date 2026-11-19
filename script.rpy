@@ -12,573 +12,707 @@ define En = Character("Enfermera", color="#47252e")
 init python:
     import abc
 
-    # Atributos de micaela como la confianza que gana con sus aliados y la energia para hablar
     class EstadoMicaela(object):
+        """Guarda el estado interno de Micaela.
+
+        Los atributos son privados: solo se modifican mediante metodos.
+        """
+
         def __init__(self):
-            self.__confianza_agustin = 0
-            self.__energia = 10
+            self.__confianza_agustin = 0   # sube si acepta la ayuda de Agustin
+            self.__energia = 10            # baja si rechaza la ayuda
 
         def aceptar_cuaderno(self):
+            """Micaela acepta el cuaderno: gana confianza en Agustin."""
             self.__confianza_agustin += 1
 
         def pasar_de_largo(self):
+            """Micaela rechaza la ayuda: pierde energia."""
             self.__energia -= 1
 
         def confianza(self):
+            """Devuelve la confianza actual en Agustin."""
             return self.__confianza_agustin
 
         def energia(self):
+            """Devuelve la energia actual de Micaela."""
             return self.__energia
-        
-init python:
-    import abc
+
 
     class Publicacion(abc.ABC):
+        """Clase abstracta: cualquier publicacion de redes sociales.
+
+        No se instancia directamente. Cada hija implementa texto().
+        """
+
         def __init__(self, texto_post):
             self.__texto_post = texto_post
 
         def get_texto_post(self):
+            """Devuelve el contenido original de la publicacion."""
             return self.__texto_post
 
         @abc.abstractmethod
         def texto(self):
+            """Devuelve el texto tal como se muestra en pantalla."""
             pass
 
+
     class PublicacionFoto(Publicacion):
+        """Publicacion con foto de Micaela."""
+
         def texto(self):
             return "Foto de Micaela: \"" + self.get_texto_post() + "\""
 
+
     class PublicacionViral(Publicacion):
+        """Publicacion que circula por todas las redes."""
+
         def texto(self):
             return "Viral (" + str(len(self.get_texto_post())) + " caracteres): " + self.get_texto_post()
 
+# Saves
 default estado = EstadoMicaela()
+default post = None
 
+# Canal extra para los sonidos
 init python:
     renpy.music.register_channel("canal1", mixer="sfx")
-#Para reproducir mas audios kjj
-init python:
     renpy.music.register_channel("canal2", mixer="sfx")
 
-# El juego comienza acá.
-# Todos los "insert" llevan un plano cinematografico que tendré que meter despues
+# El juego comienza acá
 
 label start:
-    #----------#
-    #--ACTO I--#
-    #----------#
 
-    scene cuarto_micaela1 with fade
-    play sound alarm_clock loop
-    play canal1 phone_vibration loop
+    scene black
+    play music dark_piano
 
-    "Abrís los ojos en la cama mientras el teléfono zumba sobre la mesa de luz."
+    show text "{size=60}{b}LO QUE NUNCA SE DIJO{/b}{/size}" with dissolve
+    pause 3.0
+    hide text with dissolve
 
-    show micaela_acostada with fade
+    show text "{size=40}PRESENTADO POR: KINTSUKO{/size}" with dissolve
+    pause 3.0
+    hide text with dissolve
 
-    "Estirás el brazo derecho, agarrás el celular y mirás la pantalla iluminada."
+    jump acto1_escena1
 
-    scene pantalla_pd_insultos with fade
-    pause 1.5
+label acto1_escena1:
 
-    Mi "Otra vez no..."
+    scene cuarto_micaela with fade
+    play music whatwentwe volume 2.5
+    play canal1 alarm_clock loop
+    play canal2 phone_vibration loop
+
+    show micaela_cansadaf at left with dissolve
+
+    Mi "..."
 
     menu:
-        "Apagar la alarma e incorporarte":
-            stop sound
-            stop canal1
-            jump escena_2
+        "Apagar la alarma y alistarte":
+            jump acto1_escena2
 
         "Volver a cubrirte con la sábana":
-            jump escena_1b
+            jump acto1_escena1b
 
-label escena_1b:
+label acto1_escena2:
 
-    show micaela_ocultar_celular with fade
+    stop canal1
+    stop canal2
 
-    "Girás el celular boca abajo y lo ocultás debajo de la almohada."
+    show micaela_cansadaf at center with move
 
-    show micaela_bajo_sabana with fade
+    play sound item_equip
 
-    "Tapás tu cuerpo por completo con la sábana y apretás tus oídos con ambas manos."
+    hide micaela_cansadaf
 
-    play canal1 notification_sound loop fadein 0.5 volume 1
-    stop sound fadeout 3
-    play canal1 notification_sound loop fadein 0.5 volume 5
+    show publicacion_micaela at center with dissolve
+    pause 2
 
-    show micaela_cuerpo_tapado with fade
-    pause 1
+    show insultos_pantalla at center with dissolve
+    Mi "Otra vez no."
 
-    show micaela_suspiro_largo with fade
+    hide publicacion_micaela
+    hide insultos_pantalla with dissolve
 
-    "Soltás el aire en un suspiro largo y dejás caer tus brazos a los costados."
+    show micaela_cansadaf at center with dissolve
 
-    scene negro_absoluto with Dissolve(2.0)
-    pause 1.5
+    jump acto1_escena3
 
-    centered "{b}FINAL 1 DE 3: FUERA DE LÍNEA{/b}\n\nFIN DEL ACTO I"
-    return
 
-label escena_2:
+label acto1_escena1b:
+
+    hide micaela_cansadaf
+    show micaela_devastada at left
+    show micaela_devastada at slot2 with move
+    stop music fadeout 2
+    play sound sheet_rustle volume 10
+
+    stop canal1 fadeout 10
+    pause 4
+    play canal2 notification_sound
+    pause 4
+    play canal1 sobbing
+
+    scene black with Dissolve(2.0)
+    pause 1.0
+
+    centered "{b}FINAL 1 DE 3: FUERA DE LÍNEA{/b}"
+
+    jump creditos
+
+
+label acto1_escena3:
+
+    play sound pasos
 
     scene cocina with fade
-    play sound water_drop loop
+    play music musica_tension
+    play canal2 radio_tuning
+    play canal1 water_drop
 
-    show marta_pm at right with dissolve
-    show micaela mochila_hombro at left with dissolve
+    show marta_resentida at slot1 with dissolve
+    show micaela_cansada2 at right with dissolve
+    pause 1
+    show micaela_cansada2 at slot3 with move
+    hide micaela_cansada2
+    show micaela_cansada2f at slot3
+    hide micaela cansada2f
 
-    "Abrís la puerta de la cocina y agarrás los billetes junto a un pan duro de la mesa."
+    play sound item_equip
+    show micaela_cansada2f at slot3, temblar
+    show mano_billete at truecenter with dissolve
+    pause 0.5
+    hide mano_billete with dissolve
 
-    Ma "¿Otra vez te quedaste hasta cualquiera con ese aparato, boludita?"
+    play sound item_equip
+    show micaela_cansada2f at slot3, temblar
+    show mano_manzana at truecenter with dissolve
+    pause 0.5
+    hide mano_manzana with dissolve
 
-    "Apretás el pan dentro de tu puño y bajás la vista hacia el suelo."
+    play sound phone_notification
 
-    Ma "Esa piba te tiene de obra de caridad."
+    pause 2
 
-    "Mirás la manzana podrida sobre la mesa y apartás la mano sin tocarla."
+    Ma "Y dale con el celular."
+    Ma "¿No podés dejar esa porquería por al menos un día? ¡Hacé algo útil por una vez en tu vida y salí a buscar laburo!"
 
-    show insert manzana_podrida at truecenter with dissolve
-    pause 1.0
-    hide insert manzana_podrida with dissolve
+    hide micaela_cansada2f
+    show micaela_iraf at slot3
 
-    "Pasás una mano rápida por tu mejilla, girás hacia la puerta y cruzás el umbral."
+    show manzana_machucada at truecenter with dissolve
 
-    stop sound
+    pause 1
+    hide mano_manzana
+
+    play sound manzana_aplastandose
+    with hpunch
+
+    pause 3
+    hide manzana_machucada with dissolve
+
+    Ma "¡Y no me ensucies el piso que lo acabo de limpiar!"
+
+    show micaela_iraf at right with move
+
+    Mi "Quedate tranquila que ya me voy."
+
+    hide marta_resentida with dissolve
+    hide micaela_iraf with moveoutright
+
+    stop canal1
+    stop canal2
+    stop music
     play sound door_slam
     with vpunch
 
-    jump escena_3
+    jump acto1_escena4
 
-label escena_3:
 
-    scene bg porton_colegio with fade
-    #play sound murmullo_calle
+label acto1_escena4:
 
-    show micaela walk at left with dissolve
-    show agustin muro_cuaderno at right with dissolve
-    pause 0.5
-    
-    show agustin ofreciendo_cuaderno at right
-    Ag "Se te cayó ayer en el aula."
+    play canal1 pasos
+    scene entrada_colegio with fade
+    play music sabbath
+    play canal2 crowd_murmur
 
-    "Cruzás los brazos y mirás el cuaderno a la altura de tu pecho."
+    show micaela_desconfiada at right with moveinright
+    stop canal1
+
+    show agustin_idlef at left with dissolve
+    pause 1
+    hide agustin_idlef
+    show agustin_idlef at slot3 with move
+    hide agustin_idlef
+    show agustin_amablef at slot3
+
+    Ag "Hola. Se te cayó ayer en el aula."
+
+    show agustin_amablef at slot3, temblar
+    play sound item_equip
+    show cuaderno at truecenter with dissolve
+    pause 1
+    hide cuaderno with dissolve
+
+    show micaela_brazosx at right
+    hide micaela_desconfiada
+
+    Mi "..."
 
     menu:
         "Aceptar el cuaderno":
             $ estado.aceptar_cuaderno()
-            jump escena_3_nodo_a
+            jump acto1_escena4a
 
         "Pasar de largo":
             $ estado.pasar_de_largo()
-            jump escena_3_nodo_b
+            jump acto1_escena4b
 
-label escena_3_nodo_a:
 
-    "Extendés la mano derecha y recibís el cuaderno."
-    "Mientras abrís tu mochila, Agustín mira la correa deshilachada."
+label acto1_escena4a:
+    hide agustin_amablef
+    show agustin_amablef at slot4 with move
 
-    show agustin mirando_correa at right
+    Ag "Tu mochila..."
+
+    show mochila_micaela at truecenter with dissolve
+
+    pause 1
+
+    hide mochila_micaela with dissolve
+
     Ag "Si querés, en el recreo la arreglamos."
 
-    "Ajustás la correa con un tirón rápido y negás con la cabeza."
+    show micaela_idle22 at right
 
-    Mi "Así tira. Igual gracias."
+    play sound ajustar_mochila volume 3
 
-    hide agustin with dissolve
-    jump escena_4
+    Mi "Así aguanta. Igual gracias."
 
-label escena_3_nodo_b:
+    hide agustin_amablef
+    show agustin_amable at slot4
+    hide agustin_amable with moveoutleft
 
-    "Ignorás el brazo extendido de Agustín, apretás tu mochila y avanzás directo al portón."
+    jump acto1_escena5
 
-    hide agustin with dissolve
-    jump escena_4
+label acto1_escena4b:
 
-label escena_4:
+    hide agustin_amablef
+    show agustin_idlef at slot3
+    hide micaela_brazosx with moveoutleft
+    hide agustin_idlef
+    show agustin_idle at slot3
+    pause 1
 
-    #play sound frenada_auto
+    jump acto1_escena5
+
+
+label acto1_escena5:
+
+    # sfx: chirrido de neumáticos sobre el asfalto
+
+    # soundtrack: entra una nota aguda y brillante, demasiado dulce (tono: falso, incómodo)
+    
+    scene entrada_colegio2
+
     with hpunch
-    #stop sound
 
-    "Un auto moderno frena junto al cordón; baja Ema con un bolso de diseño."
+    show micaela insegura at left
+    show ema sonrisa_falsa at right with moveinright
 
-    show ema brazo_en_alto at right with moveinright
+    "Un auto moderno frena junto al cordón. Ema baja con un bolso de diseño y te ve."
 
     Em "¡Mica, gorda! Vení."
 
-    "Ema engancha su brazo en el tuyo y ambas cruzan el portón hacia el interior."
+    "Ema engancha su brazo en el tuyo y te arrastra hacia el interior del colegio."
 
-    jump escena_5
+    hide ema with dissolve
+    hide micaela with dissolve
+    scene black with fade
 
-label escena_5:
+    jump acto1_escena6
 
-    scene bg pasillo_casilleros with fade
-    #play sound "murmullos_y_click_de_camara
 
-    show micaela cabizbaja at left
-    show ema abrazo_falso at center
-    show companeras bloqueando_paso at right
-    with dissolve
+label acto1_escena6:
 
-    "Las tres compañeras apuntan sus celulares a la correa deshilachada de tu mochila."
+    scene pasillo with fade
+    # soundtrack: tenso, notas sostenidas y pulso creciente (tono: humillante)
+    # sfx: murmullos en el pasillo y risas contenidas
+
+    show micaela humillada at left with dissolve
+    show ema paternalista at center with dissolve
+    show companeras burlonas at right with dissolve
+
+    "Un corredor largo con casilleros metálicos. Tres compañeras bloquean el paso con los celulares en alto, apuntando a tu correa gastada."
 
     C1 "Che, Ema. ¿La trajiste de obra de caridad?"
 
-    Em "No sean malas, chicas. Mica hace lo que puede con lo que tiene."
+    "Ema suelta una risa breve, te rodea los hombros con un brazo y te aprieta contra su costado."
+
+    Em "No sean malas, chicas. Micaela hace lo que puede con lo que tiene."
     Em "Por eso yo siempre le doy una mano."
 
     "Apretás la mandíbula y bajás la vista hacia tus zapatillas gastadas."
-    "Ema suelta tu hombro y avanza hacia el aula con las tres compañeras."
+    "Ema te suelta y avanza con las tres compañeras hacia el aula."
 
     hide ema with moveoutright
     hide companeras with moveoutright
 
-    "Sacás tu celular del bolsillo y desbloqueás la pantalla."
+    "Sacás el celular del bolsillo y desbloqueás la pantalla."
 
+    # sfx: notificación de celular
     $ post = PublicacionFoto("La perrita faldera del curso")
+    show insert pantalla_post at truecenter with dissolve
     "[post.texto()]"
+    hide insert with dissolve
 
-    pause 0.5
+    # sfx: timbre escolar agudo
 
-    #play sound timbre_escolar
-    #pause 1.0
+    scene black with fade
+    jump acto2_escena1
 
-    jump escena_6
+label acto2_escena1:
 
-label escena_6:
+    scene aula with fade
+    # soundtrack: tenso, bajo y contenido (tono: frío, distante)
+    # sfx: murmullos dispersos y rasguño de tiza sobre el pizarrón
 
-    #-----------#
-    #--ACTO II--#
-    #-----------#
+    show micaela desconcertada at left with dissolve
+    show ema fria at right with dissolve
 
-    scene bg aula_clases with fade
-    #play sound risas_bajas
+    "Caminás hacia el banco libre junto a Ema. Ella apoya su bolso sobre la silla vacía para que no te sientes."
 
-    show micaela entrando at left with dissolve
-    show ema sentada_primera_fila at right with dissolve
+    Em "Hoy mejor sentate atrás, Mica. No da que nos vean tan pegadas después de esa foto."
+    Em "...Es por tu bien."
 
-    "Caminás hacia el banco libre junto a Ema; ella apoya su bolso en la silla vacía."
+    hide ema with dissolve
 
-    show ema poniendo_bolso at right
-    Em "Hoy mejor sentate atrás, Mica."
-    Em "No da que nos vean tan pegadas después de esa foto.\nEs por tu bien."
+    # La energia de Micaela (clase EstadoMicaela) cambia como camina
+    if estado.energia() < 10:
+        "Frenás, apretás la correa de tu mochila y llegás a la última fila arrastrando los pies."
+    else:
+        "Frenás, apretás la correa de tu mochila y llegás a la última fila con la cabeza gacha."
 
-    "Frenás tu marcha, apretás la correa de tu mochila y caminás hasta la última fila."
+    show agustin sereno at right with dissolve
 
-    show agustin ultima_fila at center with dissolve
+    "Dejás tu mochila sobre el pupitre vacío junto a Agustín y te sentás en silencio."
 
-    "Dejás tu mochila sobre el pupitre vacío junto a Agustín y tomás asiento."
+    # sfx: timbre de recreo
+    show companeras apuntando at center with dissolve
 
-    #play sound timbre_recreo
-    pause 0.8
+    "Ema sale al corredor. Las tres compañeras apuntan sus celulares hacia vos desde la puerta."
 
-    "Ema sale al corredor; las tres compañeras apuntan sus cámaras desde la puerta."
+    show agustin alerta at right
 
-    hide ema with moveoutright
-    show companeras apuntando_celulares at right with dissolve
+    "Agustín abre la puerta lateral que conecta con el Salón de Arte."
 
-    "Agustín gira hacia la pared lateral y abre la puerta conectora al Salón de Arte."
-
-    show agustin alerta_puerta at center
     Ag "Salí por acá."
 
     "Colgás la mochila en tu hombro y cruzás rápido hacia el salón contiguo."
 
-    jump escena_7
+    hide companeras with dissolve
+    hide agustin with dissolve
+    hide micaela with dissolve
 
-label escena_7:
+    jump acto2_escena2
 
-    scene bg salon_arte with fade
+label acto2_escena2:
 
-    show micaela alivio at left with dissolve
-    show agustin cerrando_pestillo at right with dissolve
-    #play sound clicl de pestillo
+    scene salon_arte with fade
+    # soundtrack: agradable, guitarra suave o piano cálido (tono: refugio, alivio)
+    # sfx: pestillo trabándose
 
-    "Apoyás tu mochila sobre una silla y observás la costura deshilachada."
-    "Agustín saca de su mochila un estuche con hilo negro y aguja."
+    show micaela aliviada at left with dissolve
+    show agustin concentrado at right with dissolve
 
-    show agustin hilo_y_aguja at right
+    "Un taller luminoso con mesas largas, atriles y láminas de dibujo colgadas."
+    "Agustín cierra la puerta con pestillo. Apoyás tu mochila sobre una silla y mirás la costura deshilachada de la correa."
+    "Agustín saca de su mochila un estuche con un carretel de hilo negro y una aguja."
 
+    # La confianza de Micaela (clase EstadoMicaela) decide quién cose
     if estado.confianza() > 0:
-        "Sostenés la tela tensa mientras Agustín da cuatro puntadas firmes con hilo negro."
+        "Agustín enhebra la aguja con rapidez y da cuatro puntadas firmes mientras vos sostenés la tela tensa."
 
-        Ag "Listo. Con este nudo tirás hasta fin de año."
+        Ag "Listo. Con ese nudo tirás hasta fin de año."
 
         "Tirás de la correa para probar la costura y esbozás una sonrisa breve."
     else:
-        "Agustín apoya el hilo y la aguja en la mesa; vos cosés la correa con cuatro puntadas."
+        "Agustín apoya el hilo y la aguja sobre la mesa, junto a tu mochila, y da un paso atrás en silencio."
+        "Tomás la aguja enhebrada y cosés vos misma la costura floja con cuatro puntadas rápidas."
 
-        Ag "Hacé doble nudo al final, así no se zafa."
+        Ag "Hacé doble nudo al final. Así no se suelta."
 
-    jump escena_8
+    jump acto2_escena3
 
-label escena_8:
+label acto2_escena3:
 
-    show micaela alerta at left
+    # soundtrack: agradable, se suma una melodía liviana (tono: calidez, pertenencia)
 
-    show sol carpeta_dibujo at center with moveinright
+    show sol curiosa at left with moveinright
+    show mateo incomodo at far_right_pos with moveinright
 
-    show mateo carpeta_dibujo at slot4 with moveinright
-    Mat "Che, Agus. ¿Trajiste visita?"
+    "Sol y Mateo entran al salón con carpetas de dibujo bajo el brazo y se acercan a la mesa."
+
+    Mat "Eu, Agus. ¿Trajiste visita?"
     Mat "Pará... ¿vos no sos la piba de la foto que pasaron recién?"
 
-    "Sol golpea el hombro de Mateo con su carpeta de dibujo."
+    show sol enojada at left
 
-    show sol molesta at center
     So "Cerrá el pico, Mateo."
 
-    show sol amable at center
-    So "No le des cabida, siempre tira cualquiera."
+    show sol amable at left
 
-    show mateo arrepentido at slot4
-    Mat "Perdón, che."
+    So "No le des cabida, siempre tira cualquiera. ¿Te das maña dibujando? Necesito que me tires un centro con la perspectiva antes de entregar."
 
-    show agustin tranquilo at slot2 with moveinright
-    Ag "Sentate. Acá es re tranqui."
-
-    show micaela confiada at left
-
-    So "¿Te das maña dibujando?\nNecesito que me tires un centro con la perspectiva."
-
+    show micaela tranquila at slot2
     "Asentís, descruzás los brazos y ocupás la silla entre Agustín y Sol."
-    "De golpe se abre la puerta principal de par en par."
 
-    #play sound puerta_abriendose
+    # soundtrack: la música se corta en seco
+    # sfx: golpe de puerta que se abre par en par
     with vpunch
 
-    hide agustin tranquilo
-    hide sol amable
-    hide mateo arrepentido
+    show ema furiosa at center with dissolve
 
+    "Ema se detiene en el umbral. Borra su sonrisa al verte compartir la mesa con ellos."
+
+    jump acto2_escena4
+
+
+label acto2_escena4:
+
+    # soundtrack: tenso, cuerdas graves y notas sostenidas (tono: confrontación)
+
+    show ema falsa_amabilidad at center
     show micaela insegura at left
 
-    show ema umbral_molesta at right with dissolve
-    # PPP
-    pause 1.0
-
-    jump escena_9
-
-label escena_9:
-
-    "Ema guarda su celular, recompone su sonrisa y camina detrás de tu silla."
-
-    show ema sonrisa_falsa_detras at slot2 with moveinright
-
-    "Apoya ambas manos sobre tus hombros, presionando justo sobre la costura nueva."
+    "Ema recompone su sonrisa, camina detrás de tu silla y apoya ambas manos sobre tus hombros, presionando justo sobre la costura nueva."
 
     show insert dedos_sobre_costura at truecenter with dissolve
-    #play sound vibracion_corta
     pause 1.0
-    hide insert dedos_sobre_costura with dissolve
+    hide insert with dissolve
 
-    Em "Mica, querida, te busqué por todo el pasillo."
-    Em "Vení conmigo, no te expongas acá con gente que ni conocés."
-
-    "Bajás la mirada hacia el tablero de madera y apretás tus manos sobre tus rodillas."
+    Em "Mica, querida, te busqué por todo el pasillo. Vení conmigo, no te expongas acá con gente que ni conocés."
 
     show agustin serio at right
-    Ag "Estaba por mirar un dibujo con nosotros, Ema.\nSi se quiere ir, te avisa sola."
 
-    Pe "Si vuelvo con ella, le doy el gusto.\nPero si me quedo acá... me la tengo que jugar con ellos."
+    Ag "Estaba por mirar un dibujo con nosotros, Ema. Si se quiere ir, te avisa sola."
+
+    "Bajás la mirada hacia el tablero de madera y apretás las manos sobre tus rodillas."
+    "Mirás los dedos de Ema sobre tu hombro. Después mirás a Agustín, a Sol y a Mateo, que esperan en silencio frente a la mesa."
 
     menu:
         "Quedarte en la mesa con Agustín, Sol y Mateo":
-            jump escena_10a
+            jump acto3_escena1a
 
-        "Agarrar la mochila y salir del salón con Ema":
-            jump escena_10b
+        "Tomar la mochila y salir del salón con Ema":
+            jump acto3_escena1b
 
-label escena_10a:
 
-    #---------------------#
-    #--ACTO III (Ruta A)--#
-    #---------------------#
+label acto3_escena1a:
+
+    # soundtrack: tenso que se va resolviendo (tono: valentía, tensión que cede)
+
+    show micaela segura at left
+    show ema tensa at center
+    show sol ironica at cl
+    show mateo desafiante at far_right_pos
 
     "Girás el torso hacia adelante y zafás tu hombro de los dedos de Ema."
+    "Ema retrocede medio paso, borra su sonrisa por un segundo y clava los ojos en Agustín."
 
-    show ema tensa at center with move
     Em "Después no me pidas que te cubra cuando te vuelvan a subir algo, Mica."
 
-    show sol ironica at slot2
     So "¿Cubrirla? Si la única que la estaba apretando recién eras vos."
 
-    "Mateo levanta su celular y apunta la lente de la cámara hacia Ema."
+    "Mateo toma su celular de la mesa y apunta la cámara hacia Ema."
 
-    show mateo celular_en_mano at slot4
-    Mat "Che, ¿querés que te filme cómo la apurás o te tomás el palo sola?"
+    Mat "Che, ¿querés que te filme cómo la amenazás o te tomás el palo sola?"
 
-    "Ema aprieta su bolso con los nudillos blancos y sale rápido del salón."
+    Ag "Ya escuchaste, Ema. Dejala tranquila."
+
+    "Ema aprieta la correa de su bolso de diseño con los nudillos blancos, gira sobre sus talones y camina rápido hacia la salida."
+
     hide ema with moveoutright
-    play sound "sfx_portazo.ogg"
+    # sfx: portazo
 
-    "Exhalás despacio, agarrás un lápiz de la mesa y trazás una línea sobre la lámina de Sol."
+    "Exhalás despacio, tomás un lápiz de la mesa y trazás una línea sobre la lámina de Sol."
 
-    jump escena_11a
+    scene black with fade
+    # soundtrack: silencio breve antes del salto de tiempo (tono: calma)
+    centered "{i}DOS SEMANAS DESPUÉS...{/i}"
 
-label escena_11a:
+    jump acto3_escena3a
 
-    scene bg patio_colegio with fade
-    centered "{i}DOS SEMANAS DESPUÉS{/i}"
-    pause 1.0
+label acto3_escena3a:
 
-    #play sound murmullo_general
+    scene patio with fade
+    # soundtrack: agradable y luminoso, guitarra y piano (tono: redención, empoderamiento)
+    # sfx: murmullo del patio y notificación de celular
 
-    "Compartís una mesa de cemento con Agustín, Sol, Mateo y cuatro alumnos del taller."
-    show grupo_taller_completo at left with dissolve
+    show micaela tranquila at left with dissolve
+    show taller alumnos at center with dissolve
+    show agustin seguro at right with dissolve
 
-    "Agarrás tu celular de la mesa y desbloqueás la pantalla."
+    "Compartís una mesa de cemento con Agustín, Sol, Mateo y cuatro alumnos del taller. Todos dibujan bajo la luz de la tarde."
+
+    "Una notificación suena en tu celular. Desbloqueás la pantalla."
 
     $ post = PublicacionViral("De perrita faldera a ciruja del fondo")
+    show insert pantalla_post at truecenter with dissolve
     "[post.texto()]"
+    hide insert with dissolve
 
-    pause 1.5
+    # soundtrack: baja la música, entra una nota tensa breve (tono: amenaza)
+    show ema preocupacion_falsa at far_right_pos with moveinright
 
-    "Sol apoya una mano firme sobre tu hombro; Ema avanza desde el pasillo lateral."
+    Em "Mica, ya vi lo que acaban de subir. Vení conmigo antes de que te sigan descansando, yo te cubro."
 
-    show ema dulce at slot3 with moveinright
-    show companeras detras at right with dissolve
+    "Los siete compañeros del taller rodean la mesa en silencio."
+    "Presionás el botón de bloquear la cuenta, apagás el teléfono y lo guardás en la mochila."
 
-    Em "Mica, ya vi lo que acaban de subir."
-    Em "Vení conmigo antes de que te sigan descansando, yo te cubro."
-
-    "Agustín, Sol, Mateo y los cuatro alumnos del taller rodean la mesa en silencio."
-
-    "Presionás el botón de bloquear cuenta y apagás el teléfono por completo."
-
-    "Guardás el celular en tu mochila, ajustás la correa cosida y mirás a Ema."
-
+    # soundtrack: la melodía luminosa vuelve y crece (tono: triunfo tranquilo)
     Mi "No hace falta, Ema. Ya elegí dónde quedarme."
 
-    "Ema borra su sonrisa al ver los siete rostros alrededor de la mesa."
+    "Ema borra su sonrisa al ver los siete rostros alrededor de la mesa. Una de las compañeras tira de su cárdigan hacia atrás."
 
-    show ema derrotada at slot3
     hide ema with moveoutright
-    hide companeras with moveoutright
 
-    "Agarrás el marcador negro que te extiende Sol y trazás tu firma en tu lámina."
+    "Sol te extiende un marcador negro. Lo tomás y trazás tu firma en la esquina de tu lámina."
 
-    stop sound
-    scene bg negro_absoluto with Dissolve(2.0)
+    scene black with Dissolve(2.0)
+    pause 1.0
 
-    centered "{b}FINAL 3 DE 3: CAMBIO DE RED{/b}\n\nFIN DEL ACTO III"
-    return
+    centered "{b}FINAL 3 DE 3: CAMBIO DE RED{/b}"
 
-    # Finaliza el juego:
+    jump creditos
 
-label escena_10b:
+label acto3_escena1b:
 
-    #---------------------#
-    #--ACTO III (Ruta B)--#
-    #---------------------#
+    scene pasillo with fade
+    # soundtrack: tenso, cuerdas disonantes (tono: humillación, derrota)
+    # sfx: risas y clics de cámara de celular
 
-    scene bg pasillo_casilleros with fade
+    show micaela derrotada at left with dissolve
+    show ema triunfante at center with dissolve
+    show companeras burlonas at right with dissolve
 
-    show micaela cabizbaja at left with dissolve
-    show ema sonriente at center with dissolve
-    show companeras casilleros at right with dissolve
+    "Salís del salón de arte con Ema. En el pasillo, las seguidoras de Ema esperan junto a los casilleros con los celulares en la mano."
 
-    Em "Por suerte la rescaté a tiempo, chicas.\nCasi se queda pegada con los raros del salón."
+    Em "Por suerte la rescaté a tiempo, chicas. Casi se queda pegada con los raros del salón."
 
     show insert costura_hilo_negro at truecenter with dissolve
-    play sound "sfx_risas_y_camara.ogg"
     pause 1.2
-    hide insert costura_hilo_negro with dissolve
+    hide insert with dissolve
 
     C1 "Mirá esa costura trucha, Ema."
-    C2 "¿Ahora también hacés arreglos de costura?"
+    C1 "¿Ahora también te hacés la costurera profesional?"
 
-    "Ema cuelga su bolso de diseño sobre tu brazo."
+    Em "No sean malas. Ella hoy me lleva las cosas para compensar. Alcanzame el bolso hasta el aula, Mica."
 
-    show ema entregando_bolso at center
-    Em "No sean malas. Hoy me lleva las cosas para compensar."
-    Em "Alcanzame el bolso hasta el aula, Mica."
+    "Sostenés el bolso pesado con ambas manos y bajás la vista hacia el piso."
 
-    "Sostenés el bolso pesado con ambas manos mientras la Compañera 3 te saca una foto."
-    #play sound camara_celular
-
-    "Ema y las tres compañeras doblan la esquina hacia el aula."
+    # sfx: clic de cámara de celular
+    "Una compañera levanta el celular y te saca una foto cargando el bolso de diseño."
 
     hide ema with moveoutright
     hide companeras with moveoutright
 
-    "Apoyás el bolso sobre un banco de madera y huís del colegio hacia la calle."
-    #play sound timbre_lejos
+    "Ema cruza la esquina del corredor hacia el aula junto a sus seguidoras. Quedás sola."
+    "Apoyás el bolso sobre un banco de madera y caminás rápido hacia la puerta de salida."
+    "Apretás los labios, tenés los ojos húmedos. Empujás la puerta hacia la calle."
 
-    jump escena_11b
+    # sfx: timbre del fin del recreo, a lo lejos
 
-label escena_11b:
+    scene black with fade
+    jump acto3_escena2b
 
-    scene bg bano_casa with fade
-    #play sound zumbido_y_canilla
 
-    show micaela ojos_rojos at center with dissolve
+label acto3_escena2b:
 
-    "Apoyás ambas manos en el lavabo mientras tu celular vibra sin pausa en el estante."
+    scene bano with fade
+    # soundtrack: casi silencio, un zumbido grave y sostenido (tono: angustia, tensión máxima)
+    # sfx (canal1): zumbido continuo del teléfono
+    # sfx (canal2): agua corriendo
 
-    # post bolso viral: ña foto de micaela con el bolso circula en estados con burlas
-    show insert post_bolso_viral at truecenter with dissolve
-    pause 1.5
-    hide insert post_bolso_viral with dissolve
+    show micaela devastada at left with dissolve
 
-    "Abrís el botiquín, volcás un puñado de pastillas en tu boca y tragás agua de la canilla."
+    "Un baño pequeño, con el espejo empañado y azulejos viejos. Tu celular vibra sin pausa sobre el estante."
 
-    if estado.energia() < 10:
+    $ post = PublicacionViral("Micaela cargando el bolso de Ema")
+    show insert pantalla_post at truecenter with dissolve
+    "[post.texto()]"
+    hide insert with dissolve
 
-        "Volvés a inclinar el frasco sobre tu palma abierta."
-        "Tragás de nuevo."
+    "Abrís el botiquín, tomás un frasco de pastillas y volcás un puñado en tu boca. Inclinás la cabeza bajo el chorro de la canilla y tragás."
 
-    else:
-        
-        "Mirás el frasco de pastillas por unos segundos."
-        "Te arrepentís pero ya es tarde."
-
-    "La puerta del baño golpea contra la pared; entra Marta con su uniforme de limpieza."
-
-    #stop sound
-    #play sound golpe_puerta
-    #play sound pastillas_impactando_con_el_suelo
+    # sfx: golpe violento de puerta abriéndose
     with vpunch
 
-    show marta furiosa_uniforme at right with moveinright
-    show micaela en_el_suelo at left with moveinbottom
+    show marta aterrada at right with moveinright
 
-    "Marta manotea el frasco, desparrama las pastillas y te sacude de los hombros."
+    "Marta irrumpe en el baño. Avanza dos pasos, te manotea el frasco y desparrama las pastillas sobre las baldosas. Te sujeta de los hombros y te sacude con fuerza."
 
     Ma "¿Qué mierda tomaste, pendeja? ¡Escupí eso ya!"
 
-    with hpunch
-    "Resbalás contra la pared hasta el suelo mientras Marta agarra el frasco y saca su celular."
-    jump escena_12b
+    show micaela en_el_suelo at left
 
-label escena_12b:
+    "Perdés fuerza en las rodillas y resbalás contra la pared hasta el suelo, con la mirada perdida."
+    "Marta recoge el frasco vacío, lee la etiqueta con el ceño fruncido y saca su celular del bolsillo."
 
-    scene bg habitacion_hospital with fade
-    #play sound "monitor_cardiaco
+    scene black with fade
+    jump acto3_escena3b
+
+
+label acto3_escena3b:
+
+    scene hospital with fade
+    # soundtrack: ninguna, solo el ambiente del hospital (tono: ambiguo, agotado)
+    # sfx: pitido lento y regular del monitor cardíaco
 
     show micaela camilla_dormida at left with dissolve
-    show marta silla_plastica at right with dissolve
-    show enfermera planilla at center with dissolve
+    show marta agotada at right with dissolve
+    show enfermera neutra at center with dissolve
 
-    En "El lavaje agarró a tiempo, señora.\nPor ahora sigue estable, pero todavía no reacciona."
+    "Una sala de internación iluminada por el reflejo verde de un monitor. Micaela descansa sobre una camilla blanca."
 
-    hide enfermera with moveoutright
+    En "El lavaje agarró a tiempo, señora. Por ahora sigue estable, pero todavía no reacciona."
 
-    "Sobre la mesa de luz, tu celular enciende su pantalla con una notificación nueva."
+    hide enfermera with dissolve
 
-    #play sound "vibracion_corta
+    # sfx: notificación de celular
+    "Sobre la mesa de luz, el celular de Micaela enciende su pantalla."
 
     show insert marta_apagando_celular at truecenter with dissolve
     pause 1.5
-    hide insert marta_apagando_celular with dissolve
+    hide insert with dissolve
 
-    "Marta cubre tu mano inmóvil con la suya bajo el reflejo verde del monitor."
+    "Marta toma el celular, mantiene apretado el botón lateral y lo apaga por completo. Lo apoya boca abajo sobre la mesa y cubre la mano inmóvil de Micaela con la suya."
 
-    scene bg negro_absoluto with Dissolve(2.5)
+    # sfx: pitido continuo del monitor cardíaco
+
+    scene black with Dissolve(2.5)
     pause 1.0
-    stop sound
 
-    centered "{b}FINAL 2 DE 3: SIN SEÑAL{/b}\n\nFIN DEL ACTO III"
+    centered "{b}FINAL 2 DE 3: SIN SEÑAL{/b}"
+
+    jump creditos
+
+label creditos:
+    stop canal1
+    stop canal2
+
+    scene black with fade
+    play music cierre_bgm
+    pause 5.0
+
+    centered "Desarrollado por Kintsuko\n\nDaza David\nSharif Dib\nFrancisco Rey"
+    centered "Programadores:\n\nDaza David"
+    centered "Guionistas:\n\nDaza David\nSharif Dib"
+    centered "Arte:\n\nFrancisco Rey"
+    centered "Música, SFX y BGM:\n\nFrancisco Rey\nDaza David"
+    centered "{size=60}{b}LO QUE NUNCA SE DIJO{/b}{/size}"
+
+    scene black with fade
 
     return
-
-return
