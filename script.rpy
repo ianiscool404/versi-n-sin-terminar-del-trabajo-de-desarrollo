@@ -99,7 +99,7 @@ label start:
 
 label acto1_escena1:
 
-    scene cuarto_micaela with fade
+    scene cuarto_micaela
     play music whatwentwe volume 2.5
     play canal1 alarm_clock loop
     play canal2 phone_vibration loop
@@ -108,21 +108,9 @@ label acto1_escena1:
 
     Mi "..."
 
-    menu:
-        "Apagar la alarma y alistarte":
-            jump acto1_escena2
-
-        "Volver a cubrirte con la sábana":
-            jump acto1_escena1b
-
-label acto1_escena2:
-
-    stop canal1
-    stop canal2
-
     show micaela_cansadaf at center with move
 
-    play sound item_equip
+    play sound item_equip volume 2
 
     hide micaela_cansadaf
 
@@ -137,7 +125,12 @@ label acto1_escena2:
 
     show micaela_cansadaf at center with dissolve
 
-    jump acto1_escena3
+    menu:
+        "Apagar la alarma y alistarte":
+            jump acto1_escena2
+
+        "Volver a cubrirte con la sábana":
+            jump acto1_escena1b
 
 
 label acto1_escena1b:
@@ -162,7 +155,7 @@ label acto1_escena1b:
     jump creditos
 
 
-label acto1_escena3:
+label acto1_escena2:
 
     play sound pasos
 
@@ -227,13 +220,13 @@ label acto1_escena3:
     play sound door_slam
     with vpunch
 
-    jump acto1_escena4
+    jump acto1_escena3
 
 
-label acto1_escena4:
+label acto1_escena3:
 
     play canal1 pasos
-    scene entrada_colegio with fade
+    scene entrada_colegio
     play music sabbath
     play canal2 crowd_murmur
 
@@ -242,7 +235,6 @@ label acto1_escena4:
 
     show agustin_idlef at left with dissolve
     pause 1
-    hide agustin_idlef
     show agustin_idlef at slot3 with move
     hide agustin_idlef
     show agustin_amablef at slot3
@@ -263,17 +255,17 @@ label acto1_escena4:
     menu:
         "Aceptar el cuaderno":
             $ estado.aceptar_cuaderno()
-            jump acto1_escena4a
+            jump acto1_escena3a
 
         "Pasar de largo":
             $ estado.pasar_de_largo()
-            jump acto1_escena4b
+            jump acto1_escena3b
 
 
-label acto1_escena4a:
-    hide agustin_amablef
-    show agustin_amablef at slot4 with move
+label acto1_escena3a:
 
+    hide micaela_brazosx
+    show micaela_idle22 at right
     Ag "Tu mochila..."
 
     show mochila_micaela at truecenter with dissolve
@@ -284,19 +276,20 @@ label acto1_escena4a:
 
     Ag "Si querés, en el recreo la arreglamos."
 
-    show micaela_idle22 at right
-
     play sound ajustar_mochila volume 3
 
     Mi "Así aguanta. Igual gracias."
 
     hide agustin_amablef
-    show agustin_amable at slot4
+    show agustin_amablef at slot3, temblar_vertical
+    pause 1.5
+    hide agustin_amablef
+    show agustin_amable
     hide agustin_amable with moveoutleft
 
-    jump acto1_escena5
+    jump acto1_escena4
 
-label acto1_escena4b:
+label acto1_escena3b:
 
     hide agustin_amablef
     show agustin_idlef at slot3
@@ -305,10 +298,10 @@ label acto1_escena4b:
     show agustin_idle at slot3
     pause 1
 
-    jump acto1_escena5
+    jump acto1_escena4
 
 
-label acto1_escena5:
+label acto1_escena4:
 
     # sfx: chirrido de neumáticos sobre el asfalto
 
@@ -331,17 +324,17 @@ label acto1_escena5:
     hide micaela with dissolve
     scene black with fade
 
-    jump acto1_escena6
+    jump acto1_escena5
 
 
-label acto1_escena6:
+label acto1_escena5:
 
     scene pasillo with fade
     # soundtrack: tenso, notas sostenidas y pulso creciente (tono: humillante)
     # sfx: murmullos en el pasillo y risas contenidas
 
     show micaela humillada at left with dissolve
-    show ema paternalista at center with dissolve
+    show ema at center with dissolve
     show companeras burlonas at right with dissolve
 
     "Un corredor largo con casilleros metálicos. Tres compañeras bloquean el paso con los celulares en alto, apuntando a tu correa gastada."
