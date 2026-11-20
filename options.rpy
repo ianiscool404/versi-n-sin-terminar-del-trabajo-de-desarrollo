@@ -26,6 +26,9 @@
 ##
 ## The _() surrounding the string marks it as eligible for translation.
 
+define config.main_menu_music = "audio/menuost.mp3"
+
+
 define config.name = _("Lo que nunca se dijo")
 
 transform temblar_vertical:
