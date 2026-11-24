@@ -28,6 +28,8 @@
 
 define config.main_menu_music = "audio/menuost.mp3"
 
+transform far_right_pos:
+    xalign 0.75 yalign 1.0
 
 define config.name = _("Lo que nunca se dijo")
 
@@ -36,8 +38,6 @@ transform temblar_vertical:
     linear 0.05 yoffset -15
     repeat 1
     linear 0.05 yoffset 0
-
-define config.name = _("Lo que nunca se dijo")
 
 transform temblar:
     linear 0.05 xoffset -8
