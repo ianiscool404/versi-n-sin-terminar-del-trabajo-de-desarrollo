@@ -1,4 +1,5 @@
-﻿define Mi = Character("Micaela", color="#c8a2c8")
+﻿#PERSONAJES
+define Mi = Character("Micaela", color="#c8a2c8")
 define Pe = Character("Micaela (Pensamiento)", color="#c8a2c8", what_italic=True)
 define Ma = Character("Marta", color="#d9a066")
 define Ag = Character("Agustín", color="#7fb3d5")
@@ -107,6 +108,8 @@ label acto1_escena1:
 
     show micaela_cansadaf at left with dissolve
 
+    play sound notification_sound
+
     Mi "..."
 
     show micaela_cansadaf at center with move
@@ -124,13 +127,15 @@ label acto1_escena1:
     hide publicacion_micaela
     hide insultos_pantalla with dissolve
 
+    play sound notification_sound
+
     show micaela_cansadaf at center with dissolve
 
     menu:
         "Silenciar el teléfono y bajar a la cocina":
             jump acto1_escena2
 
-        "Volver a la cama a dormir":
+        "Volver a cubrirse con la sábana":
             jump acto1_escena1b
 
 label acto1_escena1b:
@@ -138,18 +143,30 @@ label acto1_escena1b:
     hide micaela_cansadaf
     show micaela_devastadaf at center
     show micaela_devastadaf at slot2 with move
+
     stop music fadeout 2
     play sound sheet_rustle volume 10
 
-    stop canal1 fadeout 10
+    pause 3.5
+    hide micaela_devastadaf
+
+    scene mica_pfet
+
+    stop canal1 fadeout 5
     pause 4
-    play canal2 notification_sound
-    hide micaela_devastadaf with dissolve
-    pause 4
-    play canal1 sobbing
 
     scene black with Dissolve(2.0)
-    pause 1.0
+    play canal2 notification_sound
+    pause 2.5
+    stop canal1
+    play canal2 notification_sound volume 3
+
+    Mi "..."
+
+    play canal1 sobbing
+
+    stop canal2
+    play canal2 notification_sound volume 5
 
     centered "{b}FINAL 1 DE 3: FUERA DE LÍNEA{/b}"
 
@@ -164,7 +181,7 @@ label acto1_escena2:
     play canal2 radio_tuning
     play canal1 water_drop
 
-    show marta_resentida at slot1 with dissolve
+    show marta_ira at slot1 with dissolve
     show micaela_cansada2 at right with dissolve
     pause 1
     show micaela_cansada2 at slot3 with move
@@ -228,7 +245,7 @@ label acto1_escena3:
     play music sabbath
     play canal2 crowd_murmur
 
-    show micaela_desconfiada at right with moveinright
+    show micaela_idle2 at right with moveinright
     stop canal1
 
     show agustin_idlef at left with dissolve
@@ -237,16 +254,18 @@ label acto1_escena3:
     hide agustin_idlef
     show agustin_amablef at slot3
 
-    Ag "Hola. Se te cayó ayer en el aula."
+    Ag "Eu, se te cayó el otro día."
 
+    hide micaela_idle2
+    show micaela_desconfiada at right
+    hide agustin_amablef
     show agustin_amablef at slot3, temblar
     play sound item_equip
     show cuaderno at truecenter with dissolve
     pause 1
     hide cuaderno with dissolve
-
-    show micaela_brazosx at right
     hide micaela_desconfiada
+    show micaela_brazosx at right
 
     Mi "..."
 
@@ -261,10 +280,10 @@ label acto1_escena3:
 
 label acto1_escena3a:
 
+    hide agustin_amablef
     hide micaela_brazosx
     show micaela_idle2 at right
-
-    Mi "Gracias."
+    show agustin_timidof at slot3
 
     Ag "Tu mochila... esta medio..."
 
@@ -278,12 +297,15 @@ label acto1_escena3a:
 
     play sound ajustar_mochila volume 3
 
+    hide micaela_idlef
+    show micaela_desconfiada at right
+
     Mi "Así aguanta. No te preocupes."
 
-    "Agustín asiente en silencio y camina hacia el portón."
-
-    hide agustin_amablef
+    hide agustin_timidof
     show agustin_amable at slot3
+    Ag "Bueno, cualquier cosa avísame."
+
     hide agustin_amable with moveoutleft
 
     jump acto1_escena4
@@ -291,11 +313,13 @@ label acto1_escena3a:
 label acto1_escena3b:
 
     hide agustin_amablef
-    show agustin_idlef at slot3
+    show agustin_sorprendidof at slot3
     hide micaela_brazosx with moveoutleft
-    hide agustin_idlef
-    show agustin_idle at slot3
+    hide agustin_sorprendidof
+    show agustin_sorprendido at slot3
     pause 1
+
+    Ag "Ah... ¡Te lo dejo en tu banco entonces!"
 
     jump acto1_escena4
 
@@ -312,20 +336,34 @@ label acto1_escena4:
 
     with hpunch
     pause 2
-    show micaela_idle2 at left
+    show micaela_sumisaf at slot1 with dissolve
 
     play sound car_door_openclosed
-    "Un auto moderno frena junto al cordón. Ema baja con un bolso de diseño y te ve."
-    pause 1
+    pause 3.5
     show ema_falsa at right with moveinright
     Em "¡Mica, gorda! Vení."
 
-    "Ema engancha su brazo en el tuyo y te arrastra hacia el interior del colegio."
+    show micaela_sumisaf at left with move
+    Mi "..."
 
-    Em "Lleváme el bolso, ¿dale?"
+    hide ema_falsa
+    show ema_enojo at right
+    show ema_enojo at center with moveinright
 
-    hide ema_falsa with dissolve
-    hide micaela_idle2 with dissolve
+    Em "Te dije que vengas, ¿estás sorda hoy?"
+
+    hide micaela_sumisaf
+    show micaela_humilladaf at left
+    Mi "Perdón..."
+
+    hide ema_enojo
+    show ema_falsa
+    Em "Está bien. Ahora entremos, que pareces perro abandonado acá fuera."
+
+    hide ema_falsa with moveoutleft
+    hide micaela_humilladaf
+    show micaela_humillada at left
+    hide micaela_humillada with moveoutleft
     scene black with fade
 
     jump acto1_escena5
@@ -338,28 +376,43 @@ label acto1_escena5:
     scene pasillo with fade
     play canal1 crowd_murmur
 
-    show micaela_humillada at left with dissolve
-    show ema_burlona at center with dissolve
-    show companera_burlona at right with dissolve
-
-    "Tres compañeras bloquean el paso con los celulares en alto, apuntándote."
+    show micaela_humillada at right with dissolve
+    show ema_burlona at left with dissolve
+    show companera_burlona at center with dissolve
 
     C1 "Che, Ema. ¿La trajiste de obra de caridad?"
 
-    "Ema suelta una risa breve, te rodea los hombros con un brazo y te aprieta contra su costado."
+    hide ema_burlona
+    show ema_burlona at left, temblar_vertical
 
+    play sound giggle volume 7
+    pause 1
+
+    hide ema_burlona
+    show ema_patern at left
     Em "No sean malas, chicas. Micaela hace lo que puede con lo que tiene."
+
+    hide ema_patern
+    show ema_idle at left
     Em "Y siempre estaré ahí para darle una mano."
+
+    hide ema_idle
+    show ema_falsa at left
+
     Em "Para eso son las amigas, ¿no?"
-
-    "Apretás la mandíbula y bajás la vista hacia tus zapatillas gastadas."
-
     Mi "Sí..."
 
-    "Ema te suelta y avanza con las tres compañeras hacia el aula."
+    hide ema_falsa
+    show ema_burlona at left
 
-    hide ema_burlona with moveoutright
-    hide companera_burlona with moveoutright
+    Em "Bueno, yo me voy a clases, vos después vení, no te hagas la boluda y te escapes."
+
+    hide ema_burlona
+    show ema_fria at left
+
+    Mi "..."
+    hide ema_fria with moveoutleft
+    hide companera_burlona with moveoutleft
 
     "Sacás el celular del bolsillo y desbloqueás la pantalla."
 

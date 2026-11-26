@@ -34,9 +34,9 @@ transform far_right_pos:
 define config.name = _("Lo que nunca se dijo")
 
 transform temblar_vertical:
-    linear 0.05 yoffset 15
     linear 0.05 yoffset -15
-    repeat 1
+    linear 0.05 yoffset 15
+    repeat 4
     linear 0.05 yoffset 0
 
 transform temblar:
